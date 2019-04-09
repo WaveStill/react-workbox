@@ -63,19 +63,38 @@ module.exports = {
           swDest: 'sw.js', // 输出 Service worker 文件
          
           runtimeCaching: [
-              // 配置路由请求缓存
-              {
-                  urlPattern: /.*\.js/, // 匹配文件
-                  handler: 'networkFirst' // 网络优先
-              },
-              {
-                urlPattern: /https:\/\/.*\/static\/.*\.(jpg|png|js|css)/, // 匹配文件
-                handler: 'cacheFirst',
-                maxAgeSeconds: 7 * 24 * 60 * 60,
-                // Only cache 10 requests.
-                maxEntries: 10,
+            // 配置路由请求缓存
+            {
+                urlPattern: /.*\.js/, // 匹配文件
+                handler: 'cacheFirst' // 缓存优先
+            },
+            {
+              urlPattern: /web-manage/, // 匹配文件
+              handler: 'staleWhileRevalidate', // 网络优先
+              
+              options:{
+                fetchOptions: {
+                  mode: 'cors',
+                  
+                },
               }
-          ]
+            },
+            {
+              urlPattern: /https:\/\/.*\/static\/.*\.(jpg|png|js|css)/, // 匹配文件
+              handler: 'cacheFirst',
+              
+              options:{
+                cacheName: 'my-img-name',
+                expiration: {
+                  maxAgeSeconds: 7 * 24 * 60 * 60,
+                  // Only cache 10 requests.
+                  maxEntries: 10,
+                }
+              
+              }
+             
+            }
+        ]
         }),
 
 
